@@ -1,0 +1,51 @@
+
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK21'
+        maven 'Maven'
+    }
+
+    options {
+        timestamps()
+        timeout(time: 30, unit: 'MINUTES')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Verify Environment') {
+            steps {
+                bat 'java -version'
+                bat 'mvn -version'
+            }
+        }
+
+        stage('Install Playwright Browser') {
+            steps {
+                bat 'mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install chromium"'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                bat 'mvn clean test -Denv=qa'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit testResults: 'target/surefire-reports/TEST-*.xml',
+                  allowEmptyResults: true
+
+            archiveArtifacts artifacts: 'target/test-results/**/*',
+                             allowEmptyArchive: true
+        }
+    }
+}
