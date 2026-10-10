@@ -32,10 +32,49 @@
     </dependencies>
 
     <properties>
-        <maven.compiler.release>21</maven.compiler.release>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+<!--        <maven.compiler.release>21</maven.compiler.release>-->
+<!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <playwright.version>1.55.0</playwright.version>
         <testng.version>7.11.0</testng.version>
     </properties>
+
+<build>
+<plugins>
+
+    <!-- Maven Compiler -->
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.1</version>
+        <configuration>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
+        </configuration>
+    </plugin>
+
+    <!-- TestNG / Surefire -->
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.3</version>
+        <configuration>
+            <suiteXmlFiles>
+<!--                <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>-->
+            </suiteXmlFiles>
+        </configuration>
+
+    </plugin>
+
+<!--    &lt;!&ndash; Allure &ndash;&gt;-->
+<!--    <plugin>-->
+<!--        <groupId>io.qameta.allure</groupId>-->
+<!--        <artifactId>allure-maven</artifactId>-->
+<!--        <version>3.1.0</version>-->
+<!--    </plugin>-->
+
+</plugins>
+</build>
 
 </project>
