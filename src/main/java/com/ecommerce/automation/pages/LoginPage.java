@@ -1,5 +1,6 @@
 package com.ecommerce.automation.pages;
 
+import com.ecommerce.automation.config.ConfigManager;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
@@ -24,7 +25,7 @@ public class LoginPage extends BasePage{
     }
 
     public void navigate() {
-        page.navigate("/index.php?route=account/login");
+        page.navigate(ConfigManager.getUIBaseURL()+"/index.php?route=account/login");
     }
 
     public void login(String email, String password) {
