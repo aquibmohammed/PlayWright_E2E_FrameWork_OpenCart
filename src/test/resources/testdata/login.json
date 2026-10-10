@@ -1,0 +1,20 @@
+[
+  {
+    "testCaseId": "LOGIN_001",
+    "email": "valid-user@example.com",
+    "password": "REPLACE_WITH_TEST_SECRET",
+    "expectedResult": "SUCCESS"
+  },
+  {
+    "testCaseId": "LOGIN_002",
+    "email": "invalid-user@example.com",
+    "password": "invalid-password",
+    "expectedResult": "FAILURE"
+  },
+  {
+    "testCaseId": "LOGIN_003",
+    "email": "",
+    "password": "",
+    "expectedResult": "VALIDATION_ERROR"
+  }
+]
