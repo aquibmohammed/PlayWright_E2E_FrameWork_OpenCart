@@ -11,7 +11,7 @@ public class BrowserManager {
         boolean headless = ConfigManager.getHeadless();
         switch (browserName){
             case "chromium":
-                return playWright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
+                return playWright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless).setSlowMo(5000));
             case "firefox":
                 return playWright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             case "webkit":

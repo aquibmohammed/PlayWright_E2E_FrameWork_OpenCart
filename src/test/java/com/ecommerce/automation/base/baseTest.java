@@ -1,28 +1,39 @@
 package com.ecommerce.automation.base;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
 import com.ecommerce.automation.config.ConfigManager;
 import com.ecommerce.automation.core.BrowserManager;
 import com.ecommerce.automation.core.PlayWrightFactory;
+import com.ecommerce.automation.pages.LoginPage;
+import com.ecommerce.automation.utils.ExtentManager;
 import com.microsoft.playwright.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public abstract class baseTest {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected Playwright playwright;
     protected Browser browser;
     protected BrowserContext browserContext;
     protected Page page;
+    protected LoginPage loginPage;
+    protected ExtentReports reports;
+    protected ExtentTest test;
 
     @BeforeMethod(alwaysRun = true)
-    public void testSetup(){
+    public void testSetup(Method method){
+         reports = ExtentManager.getExtentInstance();
+         test = reports.createTest(method.getName());
         playwright = PlayWrightFactory.createPlayWright();
         try{
             browser = BrowserManager.createBrowser(playwright);
@@ -38,6 +49,14 @@ public abstract class baseTest {
     }
     @AfterMethod(alwaysRun = true)
     public void tearDown(ITestResult iTestResult){
+        if(iTestResult.isSuccess()){
+            test.pass("TEST PASSED");
+        }else if(!iTestResult.isSuccess()){
+            test.fail("TEST FAILED");
+        }else{
+            test.skip("TEST SKIPPED");
+        }
+        reports.flush();
     try {
 
         if (browser != null) {

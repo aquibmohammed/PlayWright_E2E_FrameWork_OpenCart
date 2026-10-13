@@ -1,4 +1,4 @@
-package com.ecommerce.automation.ui;
+package com.ecommerce.automation.ui.login;
 
 import com.ecommerce.automation.base.baseTest;
 import com.ecommerce.automation.pages.LoginPage;

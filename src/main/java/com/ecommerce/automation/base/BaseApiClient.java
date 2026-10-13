@@ -18,7 +18,9 @@ public class ApiClient implements AutoCloseable {
                 new APIRequest.NewContextOptions()
                         .setBaseURL(ConfigManager.getAPIBaseURL())
                         .setTimeout(30_000)
-                        .setExtraHTTPHeaders(Map.of("Accept","applicatoin/json"))
+                        .setExtraHTTPHeaders(Map.of("Accept","application/json",
+                                "X-Oc-Restadmin-Id",
+                                ConfigManager.getAPIKey()))
         );
     }
 

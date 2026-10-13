@@ -5,41 +5,43 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
-public class LoginPage extends BasePage{
+public class LoginPage extends com.ecommerce.automation.pages.BasePage {
     private final Locator emailInput ;
     private final Locator passwordInput;
-    private final Locator loginButton;
+    private final Locator signINButton;
+    private final Locator SingUPLink;
     private final Locator errorMessage;
 
-    public LoginPage(Page page) {
-        super(page);
+    public LoginPage(Page page,String baseUrl) {
+        super(page,baseUrl);
 
-        emailInput = page.getByLabel("E-Mail Address");
-        passwordInput = page.getByLabel("Password");
+        emailInput = page.getByPlaceholder("Enter Email");
+        passwordInput = page.getByPlaceholder("Enter Password");
 
-        loginButton = page.getByRole(
+        signINButton = page.getByRole(
                 AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Login"));
-
-        errorMessage = page.locator(".alert-danger");
+                new Page.GetByRoleOptions().setName("Sign in"));
+        SingUPLink = page.getByRole(AriaRole.LINK,new Page.GetByRoleOptions().setName("New user? Signup"));
+        errorMessage = page.locator(".errorMessage");
     }
 
-    public void navigate() {
-        page.navigate(ConfigManager.getUIBaseURL()+"/index.php?route=account/login");
+    public void navigateToLoginPage() {
+        navigateTo("/login");
     }
 
     public void login(String email, String password) {
-        emailInput.fill(email);
-        passwordInput.fill(password);
-        loginButton.click();
+        fill(emailInput,email);
+        fill(passwordInput,password);
+        click(signINButton);
+
     }
 
     public boolean isErrorMessageVisible() {
-        return errorMessage.isVisible();
+        return isVisible(errorMessage);
     }
 
     public String getErrorMessage() {
-        return errorMessage.innerText();
+        return getText(errorMessage);
     }
 }
 

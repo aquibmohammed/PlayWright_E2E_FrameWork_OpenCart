@@ -43,12 +43,14 @@ public class ConfigManager {
         value = PROPERTIES.getProperty(key);
         return value.trim();
     }
-
     public static String getUIBaseURL(){
         return get("ui.baseUrl");
     }
     public static String getAPIBaseURL(){
         return get("api.baseUrl");
+    }
+    public static String getAPIKey() {
+        return get("api.key");
     }
     public static String getBrowser(){
         return get("browser").trim().toLowerCase();
@@ -63,6 +65,7 @@ public class ConfigManager {
         return Double.parseDouble(get("navigation.timeout.ms"));
     }
 
+
     public static int getPositiveInt(String key){
         try{
             int value = Integer.parseInt(key);
@@ -74,6 +77,7 @@ public class ConfigManager {
             throw new IllegalArgumentException("Configuration must be a valid integer: "+ key ,e);
         }
 
+        }
     }
 
-}
+

@@ -1,0 +1,120 @@
+package com.ecommerce.automation.ui;
+
+import com.ecommerce.automation.base.baseTest;
+import com.ecommerce.automation.config.ConfigManager;
+import com.microsoft.playwright.*;
+import com.microsoft.playwright.Frame;
+import com.microsoft.playwright.assertions.PlaywrightAssertions;
+import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.SelectOption;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import java.awt.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
+public class SmokeTest extends baseTest {
+    @Test
+    public void openTheApplicaton(){
+        page.navigate(ConfigManager.getUIBaseURL());
+        Assert.assertFalse(page.title().isBlank(),"Application page title should not be blank");
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Sign in")).click();
+        PlaywrightAssertions.assertThat(page.locator(".errorMessage")).containsText(Pattern.compile("required"));
+
+
+        //sign up
+        page.getByText("New user? Signup").click();
+        Locator locator = page.getByRole(AriaRole.BUTTON,new Page.GetByRoleOptions().setName("Sign Up"));
+        PlaywrightAssertions.assertThat(locator).isDisabled();
+        page.getByPlaceholder("Name").fill("test");
+        page.pause();
+        page.getByPlaceholder("Email").fill("test123@gmail.com");
+        page.getByPlaceholder("Password").fill("test123");
+        page.getByLabel("RAG", new Page.GetByLabelOptions().setExact(true)).check();
+        PlaywrightAssertions.assertThat(page.getByLabel("RAG",new Page.GetByLabelOptions().setExact(true))).isChecked();
+        page.getByLabel("automation",new Page.GetByLabelOptions().setExact(true)).check();
+        PlaywrightAssertions.assertThat(page.getByLabel("automation",new Page.GetByLabelOptions().setExact(true))).isChecked();
+        page.locator("#gender1").check();
+        PlaywrightAssertions.assertThat(page.locator("#gender1")).isChecked();
+        //this selects by its attrivbue value
+        page.locator("#state").selectOption(new SelectOption().setLabel("Goa"));
+        // this select by on screen text value
+        //page.locator("#state").selectOption("Goa");
+        String [] args = {"Playing","Reading","Swimming"};
+        page.locator("#hobbies").selectOption(args);
+        page.getByRole(AriaRole.BUTTON,new Page.GetByRoleOptions().setName("Sign Up")).click();
+        page.navigate(ConfigManager.getUIBaseURL());
+
+        // Multiple tabs and window
+        BrowserContext browserContext1 = browser.newContext();
+        page.navigate(ConfigManager.getUIBaseURL());
+        Page newPage = browserContext1.waitForPage(() -> { page.locator("")});
+        page.bringToFront();
+        newPage.bringToFront();
+        //switch to specific tab
+        List<Frame> allFrame = page.frames();
+        System.out.println("Total Number of Frames"+ allFrame.size());
+        Frame frame = page.frameByUrl(Pattern.compile(".*loing.*"));
+        FrameLocator locator1 = page.frameLocator("#");
+
+
+        //Sign-in
+        page.getByPlaceholder("Enter Email").fill("admin@email.com");
+        page.getByPlaceholder("Enter Password").fill("admin@123");
+        page.getByText("Sign in").nth(1).click();
+        PlaywrightAssertions.assertThat(page.locator(".welcomeMessage")).containsText("Welcome");
+         page.locator(".nav-menu-item-manage").hover();
+         page.getByAltText("manage category").click();
+
+
+
+//        //autoSuggestions
+//        Browser browser1 = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(100));
+//        Page page1 = browser1.newPage();
+
+        //uploadFile
+       // page.locator("#file-upload").setInputFiles(Path.of("/User/mukesh test.png"));
+        //without input tag uploading files
+        FileChooser fileChooser = page.waitForFileChooser(() -> page.getByText("#12312313").click());
+        fileChooser.setFiles(Paths.get("/sample/image.image.png"));
+
+        ///alert,,confirm and popup
+        //default playwright will dismiss it
+        //you need to firstregister
+        // alert
+        page.onDialog(dialog -> {
+            String msg = dialog.message();
+            Assert.assertTrue(msg.contains("I am a JS Alert"));
+            dialog.accept();
+        });
+        //confirm
+
+        page.onDialog(dialog -> {
+            String msg = dialog.message();
+            Assert.assertTrue(msg.contains("I am a JS Alert"));
+            dialog.accept();
+
+        });
+        page.locator("").click();
+
+        // shoadow done xpath not alowd on css selector are used
+        // shodaow root should be open
+        Locator shadowRoot = page.locator("div#username");
+        shadowRoot.locator("#name").fill("abcde");
+
+        //screenshot
+        page.screenshot(new Page.ScreenshotOptions().setFullPage(true).setPath(Paths.get("sccrenshot.png")))
+        //video
+        browser.newContext(new Browser.NewContextOptions().setRecordVideoSize(500,500).setRecordVideoDir(Paths.get("")));
+        // tracing
+        browserContext1.tracing(new Tracing.StartOptions().setScreenshots(true).setSnapshots(true).setSources(true));
+        //     sign out
+        page.getByAltText("menu").click();
+        page.getByText("Sign out").click();
+
+    }
+}
